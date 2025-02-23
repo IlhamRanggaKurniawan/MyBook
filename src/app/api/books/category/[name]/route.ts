@@ -25,6 +25,6 @@ export const GET = async (_request: NextRequest, { params }: { params: Promise<{
 
         return NextResponse.json({ books }, { status: 200 })
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 })
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }
 }

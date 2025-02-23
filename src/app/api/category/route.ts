@@ -32,7 +32,7 @@ export const POST = async (request: NextRequest) => {
 
         return NextResponse.json({ category }, { status: 201 })
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 })
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }
 }
 
@@ -42,6 +42,6 @@ export const GET = async () => {
 
         return NextResponse.json({ categories }, { status: 200 })
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 })
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }
 }
