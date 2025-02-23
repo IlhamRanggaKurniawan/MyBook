@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { upload } from "@/lib/s3";
 import { handleError } from "@/lib/validation";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -15,9 +16,23 @@ const PostBodySchema = z.object({
 
 export const POST = async (request: NextRequest) => {
     try {
-        const body = await request.json()
-        const validation = PostBodySchema.safeParse(body)
+        const formData = await request.formData()
 
+        const file = formData.get("file") as Blob | null;
+
+        const imageUrl = await upload(file);
+
+        const bookData = {
+            title: formData.get("title") as string,
+            publisher: formData.get("publisher") as string,
+            author: formData.get("author") as string,
+            isbn: formData.get("isbn") as string,
+            pages: Number(formData.get("pages")),
+            image: imageUrl,
+            categoryId: formData.get("categoryId") as string,
+        };
+
+        const validation = PostBodySchema.safeParse(bookData)
         if (!validation.success) {
             return handleError(validation.error)
         }
@@ -38,6 +53,6 @@ export const POST = async (request: NextRequest) => {
 
         return NextResponse.json({ book }, { status: 201 })
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 })
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }
 }
