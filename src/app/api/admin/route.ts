@@ -1,8 +1,10 @@
+import { hashPassword } from "@/lib/bcrypt"
 import prisma from "@/lib/prisma"
+import { handleError } from "@/lib/validation"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 
-const POSTRequestBodySchema = z.object({
+const PostBodySchema = z.object({
     name: z.string(),
     email: z.string().email(),
     password: z.string(),
@@ -11,43 +13,35 @@ const POSTRequestBodySchema = z.object({
 const POST = async (request: NextRequest) => {
     try {
         const body = await request.json()
-        const validation = POSTRequestBodySchema.safeParse(body);
+        const validation = PostBodySchema.safeParse(body);
 
         if (!validation.success) {
-            const errors = validation.error.issues.map(issue => {
-                return {
-                    field: issue.path[0],
-                    message: issue.message
-                }
-            });
-
-            return NextResponse.json({ errors }, { status: 400 });
+            return handleError(validation.error)
         }
 
-
-        const existingUser = await prisma.admin.findFirst({
+        const existingAccount = await prisma.admin.findFirst({
             where: {
                 email: validation.data.email
             }
         })
 
-        if (existingUser) {
-            return NextResponse.json(
-                { message: "Account with this email already registered" },
-                { status: 400 }
-            )
+        if (existingAccount) {
+            return NextResponse.json({ error: "Account with this email already registered" }, { status: 400 })
         }
 
-        const user = await prisma.admin.create({
-            data: validation.data
+        const hashedPassword = await hashPassword(validation.data.password)
+
+        const admin = await prisma.admin.create({
+            data: {
+                name: validation.data.name,
+                email: validation.data.email,
+                password: hashedPassword
+            }
         })
 
-        return NextResponse.json(user, { status: 201 })
+        return NextResponse.json({ admin }, { status: 201 })
     } catch (error) {
-        return NextResponse.json(
-            { error },
-            { status: 500 }
-        )
+        return NextResponse.json({ error }, { status: 500 })
     }
 }
 
