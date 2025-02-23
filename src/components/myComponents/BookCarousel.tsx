@@ -5,8 +5,21 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import BookCard from './card/BookCard'
 import axios from "axios"
 
+type book = {
+    id: string,
+    title: string,
+    publisher: string,
+    author: string,
+    isbn: string,
+    image: string,
+    pages: number,
+    categoryId: string,
+    createdAt: Date,
+    updatedAt: Date
+}
+
 const BookCarousel = () => {
-    const [books, setBooks] = useState([])
+    const [books, setBooks] = useState<book[]>([])
 
     useEffect(() => {
         const fetch = async () => {
