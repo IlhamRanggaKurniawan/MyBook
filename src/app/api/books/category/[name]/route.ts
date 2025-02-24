@@ -17,7 +17,7 @@ export const GET = async (_request: NextRequest, { params }: { params: Promise<{
  
         const books = await prisma.book.findMany({
             where: {
-                Category: {
+                category: {
                     name: validation.data.name
                 }
             }

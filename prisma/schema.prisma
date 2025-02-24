@@ -26,9 +26,9 @@ model Book {
   isbn       String    @unique
   image      String    @unique
   pages      Int
-  Loan       Loan[]
+  loan       Loan[]
   categoryId String?
-  Category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
@@ -36,7 +36,7 @@ model Book {
 model Category {
   id        String   @id @default(uuid())
   name      String   @unique
-  Books     Book[]
+  books     Book[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -55,7 +55,7 @@ model Student {
   name      String
   nis       Int      @unique
   class     String
-  Loan      Loan[]
+  loan      Loan[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

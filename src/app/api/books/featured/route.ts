@@ -6,7 +6,7 @@ export const GET = async () => {
         const books = await prisma.book.findMany({
             take: 8,
             orderBy: {
-                Loan: {
+                loan: {
                     _count: "desc"
                 }
             }

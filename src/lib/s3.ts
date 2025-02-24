@@ -21,8 +21,6 @@ export const upload = async (file: Blob | null) => {
             throw new Error("File is too large")
         }
 
-        console.log(file.type)
-
         if (!file.type.startsWith("image/")) {
             throw new Error("Invalid file type. Only images are allowed.");
         }

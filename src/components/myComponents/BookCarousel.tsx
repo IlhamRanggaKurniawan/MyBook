@@ -4,27 +4,14 @@ import React, { useEffect, useState } from 'react'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../ui/carousel'
 import BookCard from './card/BookCard'
 import axios from "axios"
-
-type book = {
-    id: string,
-    title: string,
-    publisher: string,
-    author: string,
-    isbn: string,
-    image: string,
-    pages: number,
-    categoryId: string,
-    createdAt: Date,
-    updatedAt: Date
-}
+import { Book } from '@prisma/client'
 
 const BookCarousel = () => {
-    const [books, setBooks] = useState<book[]>([])
+    const [books, setBooks] = useState<Book[]>([])
 
     useEffect(() => {
         const fetch = async () => {
-            const books = await axios.get("/api/books/latest")
-            console.log(books.data)
+            const books = await axios.get("http://localhost:3000/api/books/latest")
             setBooks(books.data)
         }
 
@@ -42,7 +29,8 @@ const BookCarousel = () => {
             </CarouselContent>
             <CarouselNext className='hidden sm:flex' />
             <CarouselPrevious className='hidden sm:flex' />
-        </Carousel>)
+        </Carousel>
+    )
 }
 
 export default BookCarousel
