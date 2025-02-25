@@ -11,7 +11,7 @@ const BookCarousel = () => {
 
     useEffect(() => {
         const fetch = async () => {
-            const books = await axios.get("http://localhost:3000/api/books/latest")
+            const books = await axios.get(`/api/books/latest`)
             setBooks(books.data)
         }
 
@@ -23,7 +23,7 @@ const BookCarousel = () => {
             <CarouselContent className=''>
                 {books && books.map((book) => (
                     <CarouselItem key={book.image} className='aspect-auto basis-full'>
-                        <BookCard author={book.author} image={book.image} name={book.title} />
+                        <BookCard id={book.id} author={book.author} image={book.image} name={book.title} />
                     </CarouselItem>
                 ))}
             </CarouselContent>

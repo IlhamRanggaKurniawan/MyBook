@@ -6,46 +6,43 @@ import React, { useEffect, useState } from 'react'
 import BookCard from '../card/BookCard'
 import { Book } from '@prisma/client'
 import axios from 'axios'
-import { useRouter, useSearchParams } from 'next/navigation'
-
+import { useDebounce } from "use-debounce"
+import { useSearchParams } from 'next/navigation'
+import CategorySelect from '../CategorySelect'
 const BookListSection = () => {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [books, setBooks] = useState<Book[]>([])
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState(searchParams.get("search") || "")
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [searchDebounce] = useDebounce(search, 300)
+  const [categoryDebounce] = useDebounce(selectedCategory, 300)
+
+  const fetchBooks = async () => {
+    const { data } = await axios.get(`/api/books`, {
+      params: {
+        query: search,
+        category: selectedCategory
+      }
+    })
+
+    setBooks(data)
+  }
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await axios.get("http://localhost:3000/api/books", {
-        params: {
-          query: searchParams.get("search")
-        }
-      })
-
-      setBooks(data)
-    }
-
-    fetch()
-  }, [searchParams])
-
-  const handleSearch = () => {
-    router.push(`?search=${search}`);
-  };
+    fetchBooks()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchDebounce, categoryDebounce])
 
   return (
-    <div className='container-responsive py-20'>
-      <form
-        className='flex gap-2 pt-8 xl:w-[50%]'
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSearch();
-        }}>
-        <Input placeholder='Search Books....' onChange={(e) => setSearch(e.target.value)} />
-        <Button className='px-8' type='submit' onClick={handleSearch}>Search</Button>
-      </form>
-      <div className='grid grid-cols-1 gap-6 py-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+    <div className='container-responsive min-h-screen'>
+      <div className='grid grid-cols-2 gap-2 pt-8 md:grid-cols-3 xl:w-[70%]'>
+        <Input placeholder='Search Books....' onChange={(e) => setSearch(e.target.value)} value={search} />
+        <CategorySelect setSelectedCategory={setSelectedCategory} />
+        <Button className='px-8 col-span-2 md:col-span-1' type='submit' onClick={fetchBooks}>Search</Button>
+      </div>
+      <div className=' grid grid-cols-1 gap-6 py-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
         {books && books.map((book) => (
-          <BookCard name={book.title} author={book.author} image={book.image} key={book.id} />
+          <BookCard id={book.id} name={book.title} author={book.author} image={book.image} key={book.id} />
         ))}
       </div>
     </div>

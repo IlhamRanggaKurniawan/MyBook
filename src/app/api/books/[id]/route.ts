@@ -19,7 +19,7 @@ export const GET = async (_request: NextRequest, { params }: { params: Promise<{
             where: validation.data
         })
 
-        return NextResponse.json({ book }, { status: 200 });
+        return NextResponse.json(book , { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }

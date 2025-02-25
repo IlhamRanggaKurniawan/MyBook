@@ -76,3 +76,14 @@ body {
     @apply px-4 sm:px-6 md:px-10 lg:px-16
   }
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

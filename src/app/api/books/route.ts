@@ -10,7 +10,7 @@ const PostBodySchema = z.object({
     author: z.string(),
     isbn: z.string(),
     pages: z.number(),
-    categoryId: z.string().uuid()
+    categoryName: z.string()
 })
 
 export const POST = async (request: NextRequest) => {
@@ -23,7 +23,7 @@ export const POST = async (request: NextRequest) => {
             author: formData.get("author") as string,
             isbn: formData.get("isbn") as string,
             pages: Number(formData.get("pages")),
-            categoryId: formData.get("categoryId") as string,
+            categoryName: formData.get("categoryName") as string,
         };
 
         const validation = PostBodySchema.safeParse(bookData)
@@ -39,7 +39,7 @@ export const POST = async (request: NextRequest) => {
             }),
             prisma.category.findUnique({
                 where: {
-                    id: validation.data.categoryId
+                    name: validation.data.categoryName
                 }
             })
         ])
@@ -72,8 +72,8 @@ export const POST = async (request: NextRequest) => {
 export const GET = async (request: NextRequest) => {
     try {
         const searchParams = request.nextUrl.searchParams
-        const query =  decodeURIComponent(searchParams.get("query") || "")
-        const categoryName =  decodeURIComponent(searchParams.get("category") || "")
+        const query = decodeURIComponent(searchParams.get("query") || "")
+        const categoryName = decodeURIComponent(searchParams.get("category") || "")
 
         const books = await prisma.book.findMany({
             where: {
@@ -83,11 +83,7 @@ export const GET = async (request: NextRequest) => {
                     { publisher: { contains: query, mode: "insensitive" } },
                     { title: { contains: query, mode: "insensitive" } },
                 ],
-                category: {
-                    name: {
-                        contains: categoryName
-                    }
-                }
+                ...(categoryName ? { categoryName: categoryName } : {}),
             },
         })
 
