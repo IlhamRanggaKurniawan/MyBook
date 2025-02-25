@@ -1,9 +1,11 @@
 import BookListSection from '@/components/myComponents/section/BookListSection'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const page = () => {
   return (
-    <BookListSection />
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookListSection />
+    </Suspense>
   )
 }
 
