@@ -10,7 +10,7 @@ const CategorySelect = ({ setSelectedCategory }: { setSelectedCategory: React.Di
 
     useEffect(() => {
         const fetch = async () => {
-            const { data } = await axios.get("/api/category")
+            const { data } = await axios.get("/api/categories")
             setCategories(data)
         }
 

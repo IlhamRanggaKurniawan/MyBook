@@ -1,6 +1,6 @@
 "use client"
 
-import { Book, HandHelping, LayoutDashboard, Menu, Users, X } from 'lucide-react'
+import { ChartColumn, LayoutDashboard, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { ModeToggle } from '../ModeToggle'
@@ -14,19 +14,9 @@ const links = [
         text: "Dashboard"
     },
     {
-        Icon: Users,
-        href: "/dashboard/students",
-        text: "Students"
-    },
-    {
-        Icon: Book,
-        href: "/dashboard/books",
-        text: "Books"
-    },
-    {
-        Icon: HandHelping,
-        href: "/dashboard/loans",
-        text: "Loans"
+        Icon: ChartColumn,
+        href: "/dashboard/analytics",
+        text: "Analytics"
     },
 ]
 
@@ -53,7 +43,7 @@ const Sidebar = () => {
                     <ModeToggle />
                 </div>
             </div>
-            <div className='h-16 bg-background border-b fixed w-full container-responsive flex items-center justify-between sm:hidden'>
+            <div className='h-16 bg-background border-b fixed w-full container-responsive z-40 flex items-center justify-between sm:hidden'>
                 <div className='h-full flex items-center gap-2'>
                     <Image src="/logo.png" alt='logo' width={100} height={100} className='h-full object-cover dark:hidden' />
                     <Image src="/logo dark theme.png" alt='logo' width={100} height={100} className='h-full hidden object-cover dark:block' />
@@ -61,7 +51,7 @@ const Sidebar = () => {
                 <Menu className='cursor-pointer md:hidden' onClick={() => setIsOpened(true)} />
             </div>
 
-            <div className={`fixed top-0 left-0 w-full h-screen bg-background p-6 flex flex-col justify-between gap-4 transition-all duration-500 ease-in-out transform ${isOpened ? "translate-x-0" : "translate-x-full"} md:hidden`}>
+            <div className={`fixed top-0 left-0 w-full h-screen bg-background z-50 p-6 flex flex-col justify-between gap-4 transition-all duration-500 ease-in-out transform ${isOpened ? "translate-x-0" : "translate-x-full"} md:hidden`}>
                 <X onClick={() => setIsOpened(false)} />
                 <nav className='flex flex-col gap-1 w-full text-xl font-bold'>
                     <p className='text-sm font-light'>Menu</p>

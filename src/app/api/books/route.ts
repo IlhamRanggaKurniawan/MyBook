@@ -13,9 +13,9 @@ const PostBodySchema = z.object({
     categoryName: z.string()
 })
 
-export const POST = async (request: NextRequest) => {
+export const POST = async (req: NextRequest) => {
     try {
-        const formData = await request.formData()
+        const formData = await req.formData()
 
         const bookData = {
             title: formData.get("title") as string,
@@ -49,7 +49,7 @@ export const POST = async (request: NextRequest) => {
         }
 
         if (!category) {
-            return NextResponse.json({ error: "Category with this ID does not exist" }, { status: 400 });
+            return NextResponse.json({ error: "Category with this name does not exist" }, { status: 400 });
         }
 
         const file = formData.get("file") as Blob | null;
@@ -69,11 +69,12 @@ export const POST = async (request: NextRequest) => {
     }
 }
 
-export const GET = async (request: NextRequest) => {
+export const GET = async (req: NextRequest) => {
     try {
-        const searchParams = request.nextUrl.searchParams
+        const searchParams = req.nextUrl.searchParams
         const query = decodeURIComponent(searchParams.get("query") || "")
         const categoryName = decodeURIComponent(searchParams.get("category") || "")
+        const page = Number(searchParams.get("page"))
 
         const books = await prisma.book.findMany({
             where: {
@@ -85,6 +86,8 @@ export const GET = async (request: NextRequest) => {
                 ],
                 ...(categoryName ? { categoryName: categoryName } : {}),
             },
+            take: 10,
+            skip: 10 * (page - 1)
         })
 
         return NextResponse.json(books, { status: 200 })

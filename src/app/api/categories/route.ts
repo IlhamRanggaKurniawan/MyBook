@@ -7,9 +7,9 @@ const PostBodySchema = z.object({
     name: z.string()
 })
 
-export const POST = async (request: NextRequest) => {
+export const POST = async (req: NextRequest) => {
     try {
-        const body = await request.json()
+        const body = await req.json()
         const validation = PostBodySchema.safeParse(body)
 
         if (!validation.success) {
