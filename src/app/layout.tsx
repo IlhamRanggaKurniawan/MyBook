@@ -17,7 +17,7 @@ export default async function RootLayout({
 }>) {
   const headerList = await headers()
   const pathname = headerList.get("x-pathname") || "/"
-  const isLoginPage = pathname === "/login";
+  const showNavbarAndFooter = pathname === "/login" || pathname.startsWith("/dashboard");
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -27,11 +27,11 @@ export default async function RootLayout({
           defaultTheme="system"
           enableSystem
         >
-          {!isLoginPage && <Navbar />}
-          <div className={`${!isLoginPage && "pt-16"}`}>
+          {!showNavbarAndFooter && <Navbar />}
+          <div className={`${!showNavbarAndFooter && "pt-16"}`}>
             {children}
           </div>
-          {!isLoginPage && <Footer />}
+          {!showNavbarAndFooter && <Footer />}
         </ThemeProvider>
       </body>
     </html>

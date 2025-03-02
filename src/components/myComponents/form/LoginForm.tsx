@@ -32,9 +32,9 @@ const LoginForm = () => {
                 withCredentials: true
             })
 
-            router.push("/")
+            router.push("/dashboard")
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
+            if (axios.isAxiosError(error) && error.response?.data.error) {
                 setError(`Login failed: ${error.response.data.error}`);
             } else {
                 setError("An unexpected error occurred.");
