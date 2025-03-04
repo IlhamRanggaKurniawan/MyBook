@@ -54,12 +54,12 @@ const LoginForm = () => {
                 <form className='space-y-4' onSubmit={handleSubmit}>
                     <div className='space-y-1'>
                         <label htmlFor='Email'>Email</label>
-                        <Input type='text' placeholder='Email' id='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <Input type='text' required placeholder='Email' id='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className='space-y-1'>
                         <label htmlFor='password'>Password</label>
                         <div className="relative">
-                            <Input type={showPassword ? "text" : "password"} placeholder='password' id='password' className='pr-10' value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <Input type={showPassword ? "text" : "password"} required placeholder='password' id='password' className='pr-10' value={password} onChange={(e) => setPassword(e.target.value)} />
                             <Button
                                 type="button"
                                 variant="ghost"

@@ -53,7 +53,7 @@ model Admin {
 model Student {
   id        String   @id @default(uuid())
   name      String
-  nis       Int      @unique
+  nis       String      @unique
   class     String
   loan      Loan[]
   createdAt DateTime @default(now())

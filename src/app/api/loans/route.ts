@@ -8,6 +8,8 @@ const POSTBodySchema = z.object({
     studentId: z.string().uuid()
 })
 
+const DELETEQuerySchema = z.string().uuid()
+
 export const POST = async (req: NextRequest) => {
     try {
         const body = await req.json()
@@ -15,6 +17,19 @@ export const POST = async (req: NextRequest) => {
 
         if (!validation.success) {
             return handleError(validation.error)
+        }
+
+        const [student, book] = await Promise.all([
+            await prisma.student.findUnique({ where: { id: validation.data.studentId } }),
+            await prisma.book.findUnique({ where: { id: validation.data.bookId } })
+        ])
+
+        if (!student) {
+            return NextResponse.json({error: "Student With This Id doen't exist"}, { status: 404 })
+        }
+
+        if (!book) {
+            return NextResponse.json({error: "Book With This Id doen't exist"}, { status: 404 })
         }
 
         const loan = await prisma.loan.create({
@@ -56,6 +71,29 @@ export const GET = async (req: NextRequest) => {
         })
 
         return NextResponse.json(loans, { status: 200 })
+    } catch (error) {
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
+    }
+}
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+        const id = req.nextUrl.searchParams.get("id")
+
+        const validation = DELETEQuerySchema.safeParse(id)
+
+        if (!validation.success) {
+            return handleError(validation.error)
+        }
+
+        const tes = await prisma.loan.delete({
+            where: {
+                id: id!
+            }
+        })
+
+        return NextResponse.json(tes, { status: 201 })
+
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }

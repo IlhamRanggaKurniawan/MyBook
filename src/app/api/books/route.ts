@@ -13,6 +13,8 @@ const PostBodySchema = z.object({
     categoryName: z.string()
 })
 
+const DELETEQuerySchema = z.string().uuid()
+
 export const POST = async (req: NextRequest) => {
     try {
         const formData = await req.formData()
@@ -74,7 +76,8 @@ export const GET = async (req: NextRequest) => {
         const searchParams = req.nextUrl.searchParams
         const query = decodeURIComponent(searchParams.get("query") || "")
         const categoryName = decodeURIComponent(searchParams.get("category") || "")
-        const page = Number(searchParams.get("page"))
+        const page = Number(searchParams.get("page")) || 1
+        const take = Number(searchParams.get("take")) || 10
 
         const books = await prisma.book.findMany({
             where: {
@@ -86,11 +89,34 @@ export const GET = async (req: NextRequest) => {
                 ],
                 ...(categoryName ? { categoryName: categoryName } : {}),
             },
-            take: 10,
+            take,
             skip: 10 * (page - 1)
         })
 
         return NextResponse.json(books, { status: 200 })
+    } catch (error) {
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
+    }
+}
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+        const id = req.nextUrl.searchParams.get("id")
+
+        const validation = DELETEQuerySchema.safeParse(id)
+
+        if (!validation.success) {
+            return handleError(validation.error)
+        }
+
+        const tes = await prisma.book.delete({
+            where: {
+                id: id!
+            }
+        })
+
+        return NextResponse.json(tes, { status: 201 })
+
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }

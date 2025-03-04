@@ -1,6 +1,6 @@
 "use client"
 
-import { ChartColumn, LayoutDashboard, Menu, X } from 'lucide-react'
+import { ChartColumn, LayoutDashboard, Menu, Shield, X } from 'lucide-react'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { ModeToggle } from '../ModeToggle'
@@ -17,6 +17,11 @@ const links = [
         Icon: ChartColumn,
         href: "/dashboard/analytics",
         text: "Analytics"
+    },
+    {
+        Icon: Shield,
+        href: "/dashboard/admin",
+        text: "Admin"
     },
 ]
 

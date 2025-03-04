@@ -21,7 +21,8 @@ const BookListSection = () => {
     const { data } = await axios.get(`/api/books`, {
       params: {
         query: search,
-        category: selectedCategory
+        category: selectedCategory,
+        take: 9999
       }
     })
 

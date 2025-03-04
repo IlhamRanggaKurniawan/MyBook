@@ -5,9 +5,11 @@ import { z } from "zod"
 
 const POSTBodySchema = z.object({
     name: z.string(),
-    nis: z.number(),
+    nis: z.string().regex(/^\d+$/, "NIS must be a number"),
     class: z.string()
 })
+
+const DELETEQuerySchema = z.string().uuid()
 
 export const POST = async (req: NextRequest) => {
     try {
@@ -38,7 +40,7 @@ export const POST = async (req: NextRequest) => {
 
         return NextResponse.json(student, { status: 201 })
     } catch (error) {
-        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
+        return NextResponse.json(error, { status: 500 })
     }
 }
 
@@ -46,13 +48,13 @@ export const GET = async (req: NextRequest) => {
     try {
         const searchParams = req.nextUrl.searchParams
         const query = decodeURIComponent(searchParams.get("query") || "")
-        const page = Number(searchParams.get("page"))
+        const page = Number(searchParams.get("page")) || 1
 
         const students = await prisma.student.findMany({
             where: {
                 OR: [
                     { name: { contains: query, mode: "insensitive" } },
-                    { nis: isNaN(Number(query)) ? undefined : Number(query) },
+                    { nis: { contains: query } },
                     { class: { contains: query, mode: "insensitive" } },
                 ]
             },
@@ -61,6 +63,29 @@ export const GET = async (req: NextRequest) => {
         })
 
         return NextResponse.json(students, { status: 200 })
+    } catch (error) {
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 })
+    }
+}
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+        const id = req.nextUrl.searchParams.get("id")
+
+        const validation = DELETEQuerySchema.safeParse(id)
+
+        if (!validation.success) {
+            return handleError(validation.error)
+        }
+
+        const tes = await prisma.student.delete({
+            where: {
+                id: id!
+            }
+        })
+
+        return NextResponse.json(tes, { status: 201 })
+
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 500 })
     }
